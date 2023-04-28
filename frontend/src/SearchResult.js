@@ -1,15 +1,25 @@
+// import Empty from "./Empty.js";
 class SearchResult {
   $searchResult = null;
   data = null;
   onClick = null;
+  
 
-  constructor({ $target, initialData, onClick }) {
-    this.$searchResult = document.createElement("div");
+  constructor({ $target, initialData, onClick, onNextPage }) {
+    const $Container = document.createElement("section");
+    this.$searchResult = document.createElement("ul");
     this.$searchResult.className = "SearchResult";
-    $target.appendChild(this.$searchResult);
+
+    $Container.appendChild(this.$searchResult);
+    $target.appendChild($Container);
 
     this.data = initialData;
     this.onClick = onClick;
+    this.onNextPage = onNextPage;
+    
+    this.Empty = new Empty({
+      $target: $Container
+    })
 
     this.render();
   }
@@ -17,23 +27,52 @@ class SearchResult {
   setState(nextData) {
     this.data = nextData;
     this.render();
+    this.Empty.show(nextData)
   }
 
+  isElementInViewport(el) {
+    const rect = el.getBoundingClientRect();
+    return (
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+  }
+
+  applyEventToElement = (items) => {
+    document.addEventListener("scroll", () => {
+      items.forEach((el, index) => {
+        if (this.isElementInViewport(el) && items.length - 1 === index) {
+          this.onNextPage();
+        }
+      });
+    });
+  };
+
   render() {
+    if(this.data === null){
+      this.$searchResult.style.display = 'none';
+      return;
+    }
     this.$searchResult.innerHTML = this.data
       .map(
-        cat => `
-          <div class="item">
+        (cat) => `
+          <li class="item"> 
             <img src=${cat.url} alt=${cat.name} />
-          </div>
+          </li>
         `
       )
       .join("");
-
     this.$searchResult.querySelectorAll(".item").forEach(($item, index) => {
       $item.addEventListener("click", () => {
         this.onClick(this.data[index]);
       });
     });
+
+    let listitems = this.$searchResult.querySelectorAll(".item");
+    this.applyEventToElement(listitems);
   }
 }
+

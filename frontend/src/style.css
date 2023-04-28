@@ -5,6 +5,19 @@
   font-style: normal;
 }
 
+/* 변수 선언 */
+/* *최상위 요소 root에 변수를 선언하면 모든 요소에서 이 변수를 쓸 수 있다 */
+:root[color-mode="dark"] {
+  --background: #000;
+  --textcolor: white;
+}
+
+body {
+  /* 변수 적용 */
+  background-color: var(--background);
+  color: var(--textcolor);
+}
+
 html {
   box-sizing: border-box;
 }
@@ -30,6 +43,7 @@ body * {
   display: grid;
   grid-template-columns: repeat(4, minmax(250px, 1fr));
   grid-gap: 10px;
+  padding: 0;
 }
 
 .SearchResult img {
@@ -46,9 +60,40 @@ body * {
 }
 
 .SearchInput {
-  width: 100%;
+  width: 80%;
   font-size: 40px;
   padding: 10px 15px;
+}
+
+.randomButton {
+  width: 18%;
+  padding: 18px;
+  cursor: pointer;
+}
+
+.Loading {
+  width: 100%;
+  height: 100vh;
+  background: rgba(0,0,0,.2);
+  position: fixed;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  
+}
+
+.Loading p {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  font-size: 50px;
+}
+
+.Empty{
+  text-align: center;
+  font-size: 50px;
+
 }
 
 .ImageInfo {
@@ -75,7 +120,8 @@ body * {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  background-color: #fff;
+  background-color: var(--background);
+  
   border: 1px solid #eee;
   border-radius: 5px;
 }
@@ -84,11 +130,29 @@ body * {
   width: 100%;
 }
 
-/* dark mode 처리
+@media screen and (max-width: 992px) {
+  .SearchResult {
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+  }
+}
+@media screen and (max-width: 768px) {
+  .SearchResult {
+    grid-template-columns: repeat(2, minmax(250px, 1fr));
+  }
+  .ImageInfo .content-wrapper {
+    width: 100%;
+  }
+}
+@media screen and (max-width: 576px) {
+  .SearchResult {
+    grid-template-columns: repeat(1, minmax(250px, 1fr));
+  }
+}
+
+/* 
 @media (prefers-color-scheme: dark) {
-  body {
+  body{
     background-color: #000;
     color: white;
   }
-}
-*?
+} */
